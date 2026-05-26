@@ -53,7 +53,7 @@ if __name__ == "__main__":
         start_data = config.config_data
         
         # 2. Iniciar Ventana Principal
-        main_win = AppEco(start_data["inst_threshold"], start_data["accum_threshold"], start_data["baseline"], data_queue)
+        main_win = AppEco(data_queue)
         
         # --- CONEXIÓN DE RECONEXIÓN ---
         # Conectamos la señal de la ventana al gestor de hilos del main

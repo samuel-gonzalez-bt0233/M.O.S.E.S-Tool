@@ -16,9 +16,9 @@ class AppEco(AppLayout):
     new_training_metrics = pyqtSignal(MetricsDto)
     reconnection_request = pyqtSignal(dict)
 
-    def __init__(self, inst_threshold, accum_threshold, baseline, data_queue):
+    def __init__(self, data_queue):
         super().__init__()
-        self.energy_model = EnergyModel(inst_threshold, accum_threshold, baseline)
+        self.energy_model = EnergyModel()
         self.results_model = MetricsModel()
         self.data_queue = data_queue
         self.setup_ui(self.energy_model)
@@ -29,7 +29,7 @@ class AppEco(AppLayout):
         self._energy = EnergyHandler(
             self.energy_model, self, self.stack, self.btn_toggle,
             self.graph_inst, self.graph_accum,
-            self.label_watts, self.input_inst_threshold, self.input_accum_threshold, self.input_baseline
+            self.label_watts
         )
         self._metrics = MetricsHandler(
             self.results_model, self.stack, self.training_container,
@@ -51,7 +51,6 @@ class AppEco(AppLayout):
         self.btn_help.clicked.connect(self.open_help)
         self.new_training_metrics.connect(self._metrics.process_new_training_metrics)
         self.btn_reconnect.clicked.connect(self.emit_config)
-        self.btn_early_stopping_config.clicked.connect(self.open_early_stopping_config_dialog)
 
     def update_all(self):
         while not self.data_queue.empty():
@@ -86,5 +85,3 @@ class AppEco(AppLayout):
             self.terminal.log(f"TAPO: Intentando conectar a {window.config_data['ip']}", LogType.DEBUG)
             self.reconnection_request.emit(window.config_data)
 
-    def open_early_stopping_config_dialog(self):
-        self.early_stopping_config_dialog.exec()

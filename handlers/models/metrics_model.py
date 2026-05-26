@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal
 
-from core.early_stopping_handler import EarlyStoppingHandler
 from core.metrics_dto import MetricsDto
 
 
@@ -20,7 +19,6 @@ BASE_DIR = "Training Metrics"
 
 class MetricsModel:
     def __init__(self):
-        self.es_handler = EarlyStoppingHandler()
         self.metrics = {}
         self.metric_order = []
         self.current_index = 0
@@ -49,8 +47,6 @@ class MetricsModel:
             )
 
             self.save_metrics_log(metric, v.value, metrics)
-
-            self.es_handler.update_phase_state(metric, v.value, phase, metrics.step, metrics.step_type)
 
 
     def save_metrics_log(self, val_name: str, value: float, metrics: MetricsDto):

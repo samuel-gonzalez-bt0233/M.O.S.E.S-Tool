@@ -4,10 +4,7 @@ from datetime import datetime
 
 
 class EnergyModel:
-    def __init__(self, inst_threshold, accum_threshold, baseline):
-        self.inst_threshold = inst_threshold
-        self.accum_threshold = accum_threshold
-        self.baseline = baseline
+    def __init__(self):
         self.last_measurement = 0.0
         self.total_consumption = 0.0
         self.data_y = []

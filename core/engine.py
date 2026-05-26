@@ -9,12 +9,6 @@ async def measure_consumption(data_queue, credentials, stop_event):
     EMAIL = credentials['email']
     PASS = credentials['pass']
 
-    """
-    IP_ENCHUFE = "10.171.247.148"
-    EMAIL = "samuel.gonzalez.ramos.2004@gmail.com"
-    PASS = "TPlink115"
-    
-    """
     client = ApiClient(EMAIL, PASS)
     
     try:
