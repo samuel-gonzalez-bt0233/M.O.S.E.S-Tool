@@ -17,31 +17,25 @@ from core.mqtt_listener import init_mqtt_listener
 # avisar al hilo del Tapo que debe cerrarse
 tapo_stop_event = threading.Event()
 
-def manage_plug_threads(nuevos_datos, q):
-    """Detiene el hilo actual y lanza uno nuevo con las credenciales actualizadas."""
+def manage_plug_threads(new_data, q):
     global tapo_stop_event
     
-    # 1. Indicamos al hilo actual que debe terminar su bucle
     tapo_stop_event.set() 
     
-    # 2. Creamos un nuevo evento de parada (limpio) para el siguiente hilo
     tapo_stop_event = threading.Event()
     
-    # 3. Función interna que ejecutará el bucle de asyncio
     def run_engine():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
-            # Pasamos el tapo_stop_event al engine para que consulte .is_set()
-            loop.run_until_complete(measure_consumption(q, nuevos_datos, tapo_stop_event))
+            loop.run_until_complete(measure_consumption(q, new_data, tapo_stop_event))
         finally:
             loop.close()
             main_win.terminal.log("[MAIN] Bucle de motor Tapo cerrado.", LogType.ERROR)
     
-    # 4. Lanzamos el hilo como daemon para que muera si cerramos la App
-    hilo = threading.Thread(target=run_engine, daemon=True)
-    hilo.start()
-    main_win.terminal.log(f"[MAIN] Hilo Tapo reiniciado para IP: {nuevos_datos.get('ip')}",LogType.WARNING)
+    thread_tapo = threading.Thread(target=run_engine, daemon=True)
+    thread_tapo.start()
+    main_win.terminal.log(f"[MAIN] Hilo Tapo reiniciado para IP: {new_data.get('ip')}",LogType.WARNING)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -52,14 +46,13 @@ if __name__ == "__main__":
     if config.exec() == QDialog.DialogCode.Accepted:
         start_data = config.config_data
         
-        # 2. Iniciar Ventana Principal
+        # MAIN WINDOW THREAD
         main_win = AppEco(data_queue)
         
-        # --- CONEXIÓN DE RECONEXIÓN ---
-        # Conectamos la señal de la ventana al gestor de hilos del main
+        # CONNECTING RECONFIGUTARION SIGNAL TO THREAD MANAGER
         main_win.reconnection_request.connect(lambda nuevos_dt: manage_plug_threads(nuevos_dt, data_queue))
         
-        # 3. Lanzar el Broker Mosquitto con CONFIGURACIÓN DE RED
+        # BROKER CONFIGURATION
         base_directory = os.path.dirname(os.path.abspath(__file__))
         broker_path = os.path.join(base_directory, "Mosquitto", "mosquitto.exe")
         config_path = os.path.join(base_directory, "Mosquitto", "mosquitto.conf")
@@ -69,17 +62,15 @@ if __name__ == "__main__":
         except Exception as e:
             main_win.terminal.log(f"BROKER: Error al iniciar: {e}", LogType.ERROR)
 
-        # 4. Iniciar el motor Tapo por primera vez
+        #INITIALIZE TAPO THREAD
         manage_plug_threads(start_data, data_queue)
 
-        # 5. Iniciar el Listener MQTT (para recibir métricas)
+        # NEW THREAD FOR MQTT BROKER
         mqtt_thread = threading.Thread(target=init_mqtt_listener, args=(main_win,), daemon=True)
         mqtt_thread.start()
         
-        # 6. Mostrar Interfaz y ejecutar App
         main_win.show()
         
-        # Al salir, intentamos matar el proceso del broker para no dejar procesos zombis
         result = app.exec()
         try:
             broker_process.terminate()

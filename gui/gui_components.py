@@ -13,19 +13,9 @@ class EcoGraph(pg.PlotWidget):
                                fillLevel=0, brush=color_fill)
 
 class EcoTerminal(QTextEdit):
-    _instance = None
-    _initialized = False
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
-    def __init__(self):
-        if EcoTerminal._initialized:
-            return
-        EcoTerminal._initialized = True
-        super().__init__()
+    def __init__(self, parent=None):
+        
+        super().__init__(parent)
         self.setObjectName("Terminal")
         self.setReadOnly(True)
 
