@@ -5,7 +5,7 @@ import pyqtgraph as pg
 from PyQt6.QtGui import QBrush
 from PyQt6.QtWidgets import QFileDialog, QDialog, QHBoxLayout, QLabel, QMessageBox, QPushButton, QVBoxLayout
 
-from handlers.models.historic_data_loader import (
+from core.historic_data_loader import (
     ConsumptionData,
     TrainingMetricsData,
     load_consumption_csv,

@@ -10,8 +10,8 @@ from styles.config_logs import LogType
 # Imports de tu proyecto
 from gui.gui_main import AppEco
 from gui.windows.gui_configuration_window import ConfigWindow
-from core.engine import measure_consumption
-from core.mqtt_listener import init_mqtt_listener
+from handler.data_receivers.engine import measure_consumption
+from handler.data_receivers.mqtt_listener import init_mqtt_listener
 
 # --- GLOBAL PARA CONTROL DE HILOS ---
 # avisar al hilo del Tapo que debe cerrarse

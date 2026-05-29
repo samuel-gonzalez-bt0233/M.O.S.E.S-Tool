@@ -1,7 +1,7 @@
 import pyqtgraph as pg
 from PyQt6.QtWidgets import QStackedWidget
 
-from handlers.models.metrics_model import MetricsModel
+from core.metrics_saver import MetricsModel
 from core.metrics_dto import MetricsDto
 
 

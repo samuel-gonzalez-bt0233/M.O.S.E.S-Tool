@@ -1,13 +1,13 @@
 from PyQt6.QtWidgets import QFileDialog, QDialog
 from PyQt6.QtCore import QTimer, pyqtSignal
 
-from handlers.models.metrics_model import MetricsModel
+from core.metrics_saver import MetricsModel
 from gui.gui_layout import AppLayout
-from handlers.models.energy_model import EnergyModel
+from core.energy_saver import EnergyModel
 from gui.windows.gui_historic_window import HistoricWindow
 from gui.windows.gui_info_window import HelpWindow
-from handlers.energy_handler import EnergyHandler
-from handlers.metrics_handler import MetricsHandler
+from handler.gui_handlers.gui_energy_handler import EnergyHandler
+from handler.gui_handlers.gui_metrics_handler import MetricsHandler
 from styles.styles import STYLE_SHEET
 from core.metrics_dto import MetricsDto
 from styles.config_logs import LogType
@@ -29,7 +29,7 @@ class AppEco(AppLayout):
         self._energy = EnergyHandler(
             self.energy_model, self, self.stack, self.btn_toggle,
             self.graph_inst, self.graph_accum,
-            self.label_watts
+            self.label_watts, self.terminal
         )
         self._metrics = MetricsHandler(
             self.results_model, self.stack, self.training_container,
@@ -61,7 +61,6 @@ class AppEco(AppLayout):
                 self.energy_model.register_measurement(dato)
 
         valor = self.energy_model.last_measurement
-        self.energy_model.register_measurement(valor)
         self._energy.update(valor)
 
     def open_history(self):

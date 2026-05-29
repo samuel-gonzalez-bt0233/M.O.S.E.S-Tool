@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMessageBox, QStackedWidget
 from styles.config_logs import LogType
-from handlers.models.energy_model import EnergyModel
+from core.energy_saver import EnergyModel
 from gui.gui_components import EcoGraph, EcoTerminal
 
 
@@ -14,6 +14,7 @@ class EnergyHandler:
         graph_inst: EcoGraph,
         graph_accum: EcoGraph,
         label_watts,
+        terminal: EcoTerminal
     ):
         self._model = model
         self._parent = parent
@@ -22,6 +23,7 @@ class EnergyHandler:
         self._graph_inst = graph_inst
         self._graph_accum = graph_accum
         self._label_watts = label_watts
+        self._terminal = terminal
 
 
     def update(self, value: float):
@@ -33,7 +35,7 @@ class EnergyHandler:
         self._model.reset()
         self._graph_inst.curve.setData([])
         self._graph_accum.curve.setData([])
-        EcoTerminal().log("SISTEMA: Datos reseteados.", LogType.DEBUG)
+        self._terminal.log("SISTEMA: Datos reseteados.", LogType.DEBUG)
 
     def toggle_graph(self):
         if self._stack.currentWidget() is self._graph_inst:
