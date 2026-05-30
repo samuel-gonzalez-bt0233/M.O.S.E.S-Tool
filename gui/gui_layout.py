@@ -23,10 +23,10 @@ class AppLayout(QMainWindow):
 
         self.label_author = QLabel("Desarrollado por: Samuel González Ramos", objectName="TextoAutor")
         self.label_author.setStyleSheet(
-            "font-size: 10px; "          # Texto pequeño de firma
-            "font-style: italic; "       # En cursiva para darle estilo de crédito
-            "color: #7F8C8D; "           # Gris suave para que sea discreto ante el tribunal
-            "margin-top: 25px;"          # Separación respecto al número gigante de arriba
+            "font-size: 10px; "          
+            "font-style: italic; "       
+            "color: #7F8C8D; "           
+            "margin-top: 25px;"          
         )
         header_layout.addWidget(self.label_author, 0, 3, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
 
