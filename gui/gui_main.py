@@ -56,7 +56,12 @@ class AppEco(AppLayout):
         while not self.data_queue.empty():
             dato = self.data_queue.get_nowait()
             if isinstance(dato, str):
-                self.terminal.log(f"TAPO: {dato}", LogType.ERROR)
+                message_lower = dato.lower()
+                if "error" in message_lower:
+                    self.terminal.log(f"TAPO: {dato}", LogType.ERROR)
+                else:
+                    self.terminal.log(f"TAPO: {dato}", LogType.SUCCESS)
+                
             else:
                 self.energy_model.register_measurement(dato)
 

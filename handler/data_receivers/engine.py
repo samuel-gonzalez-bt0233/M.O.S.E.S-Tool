@@ -13,7 +13,7 @@ async def measure_consumption(data_queue, credentials, stop_event):
     
     try:
         device = await client.p115(IP_ENCHUFE)
-        EcoTerminal().log(f"[ENGINE] Conectado a {IP_ENCHUFE}", LogType.SUCCESS)
+        data_queue.put(f"[ENGINE] Conectado a {IP_ENCHUFE}")
         while not stop_event.is_set():
             try:
                 

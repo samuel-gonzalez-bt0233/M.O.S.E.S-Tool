@@ -43,7 +43,7 @@ class HistoricWindow(QDialog):
         self.metric_names: list[str] = []
         self.current_metric_index = 0
 
-        # --- COMPONENTE VISUAL DE AUDITORÍA ---
+        # --- COMPONENTE VISUAL DE Búsqueda ---
         self.v_line = None # Línea vertical infinita para marcar el hito analizado
 
         self.build_ui()
@@ -317,12 +317,12 @@ class HistoricWindow(QDialog):
     def search_by_epoch_visual(self):
         """Mapea una época introducida por teclado, mueve la línea roja y muestra métricas de train y val."""
         if not self.metrics_data or not self.metric_names:
-            QMessageBox.warning(self, "Auditoría", "Primero debe importar un archivo de métricas.")
+            QMessageBox.warning(self, "Búsqueda", "Primero debe importar un archivo de métricas.")
             return
 
         text = self.input_epoch.text().strip()
         if not text.isdigit():
-            QMessageBox.warning(self, "Auditoría", "Introduzca un número de época válido.")
+            QMessageBox.warning(self, "Búsqueda", "Introduzca un número de época válido.")
             return
 
         target_epoch = int(text)
@@ -348,7 +348,7 @@ class HistoricWindow(QDialog):
                 target_ts = phase_series["val"].timestamps[idx_v]
 
         if not target_ts:
-            QMessageBox.warning(self, "Auditoría", f"La época {target_epoch} no existe en este registro.")
+            QMessageBox.warning(self, "Búsqueda", f"La época {target_epoch} no existe en este registro.")
             return
 
         # 2. Buscar el consumo de energía correspondiente en esa misma marca de tiempo
@@ -362,16 +362,16 @@ class HistoricWindow(QDialog):
         self.v_line.setValue(target_ts.timestamp())
         self.v_line.show()
         self.label_audit_info.setText(
-            f"🎯 <b>Resultado Época {target_epoch}:</b> Hora: {target_ts.strftime('%H:%M:%S')} | "
-            f"📉 <b>Train {metric_name}:</b> {val_train} | "
-            f"🧪 <b>Val {metric_name}:</b> {val_sub} | "
-            f"⚡ <b>Telemetría:</b> {watts_info}"
+            f" <b>Resultado Época {target_epoch}:</b> Hora: {target_ts.strftime('%H:%M:%S')} | "
+            f" <b>Train {metric_name}:</b> {val_train} | "
+            f" <b>Val {metric_name}:</b> {val_sub} | "
+            f" <b>Consumo:</b> {watts_info}"
         )
 
     def search_by_time_visual(self):
         """Busca una hora del reloj, posiciona la línea y extrae la época y métricas de train y val más cercanas."""
         if not self.metrics_data or not self.metric_names:
-            QMessageBox.warning(self, "Auditoría", "Primero debe importar un archivo de métricas.")
+            QMessageBox.warning(self, "Búsqueda", "Primero debe importar un archivo de métricas.")
             return
 
         time_str = self.input_time.text().strip()
@@ -385,7 +385,7 @@ class HistoricWindow(QDialog):
         try:
             target_ts = datetime.strptime(f"{fecha_base} {time_str}", "%Y-%m-%d %H:%M:%S")
         except ValueError:
-            QMessageBox.warning(self, "Auditoría", "Formato de hora incorrecto. Use HH:MM:SS (ej. 17:59:30).")
+            QMessageBox.warning(self, "Búsqueda", "Formato de hora incorrecto. Use HH:MM:SS (ej. 17:59:30).")
             return
 
         # 1. Encontrar el índice de tiempo más cercano usando una fase de referencia (ej. 'train' o la primera que haya)
@@ -419,8 +419,8 @@ class HistoricWindow(QDialog):
         self.v_line.setValue(ts_real_registro.timestamp())
         self.v_line.show()
         self.label_audit_info.setText(
-            f"⏱️ <b>Auditoría Hora {time_str}:</b> Registro más cercano: {ts_real_registro.strftime('%H:%M:%S')} | "
-            f"🔄 <b>Época:</b> {nearest_epoch} | "
-            f"📉 <b>Train:</b> {val_train} | 🧪 <b>Val:</b> {val_sub} | "
-            f"⚡ <b>Potencia:</b> {watts_info}"
+            f" <b>Resultado Hora {time_str}:</b> Registro más cercano: {ts_real_registro.strftime('%H:%M:%S')} | "
+            f" <b>Época:</b> {nearest_epoch} | "
+            f" <b>Train:</b> {val_train} |  <b>Val:</b> {val_sub} | "
+            f" <b>Consumo:</b> {watts_info}"
         )

@@ -8,11 +8,11 @@ from gui.gui_components import EcoTerminal
 
 def on_connect(client, window, flags, rc):
     if rc == 0:
-        EcoTerminal().log(f"RECEPTOR: Conectado al broker local.", LogType.SUCCESS)
+        window.terminal.log(f"RECEPTOR: Conectado al broker local.", LogType.SUCCESS)
         client.subscribe("training/metrics")
-        EcoTerminal().log(f"RECEPTOR: Suscrito al topic.", LogType.SUCCESS)
+        window.terminal.log(f"RECEPTOR: Suscrito al topic.", LogType.SUCCESS)
     else:
-        EcoTerminal().log(f"RECEPTOR: Error en la conexión. Código {rc}.", LogType.ERROR)
+        window.terminal.log(f"RECEPTOR: Error en la conexión. Código {rc}.", LogType.ERROR)
 
 
 def on_message(client, window, msg):
@@ -24,7 +24,7 @@ def on_message(client, window, msg):
         window.new_training_metrics.emit(dto)
 
     except Exception as e:
-        EcoTerminal().log(f"RECEPTOR: Error al procesar mensaje: {e}", LogType.ERROR)
+        window.terminal.log(f"RECEPTOR: Error al procesar mensaje: {e}", LogType.ERROR)
 
 
 def init_mqtt_listener(window):
@@ -33,9 +33,9 @@ def init_mqtt_listener(window):
     client.on_message = on_message
 
     try:
-        EcoTerminal().log(f"RECEPTOR: Conectando al broker local.", LogType.DEBUG)
+        window.terminal.log(f"RECEPTOR: Conectando al broker local.", LogType.DEBUG)
         client.connect("localhost", 1883, 60)
 
         client.loop_forever()
     except Exception as e:
-        EcoTerminal().log(f"RECEPTOR: No se pudo conectar al broker: {e}", LogType.WARNING)
+        window.terminal.log(f"RECEPTOR: No se pudo conectar al broker: {e}", LogType.WARNING)
