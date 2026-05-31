@@ -61,7 +61,6 @@ class AppEco(AppLayout):
                     self.terminal.log(f"TAPO: {dato}", LogType.ERROR)
                 else:
                     self.terminal.log(f"TAPO: {dato}", LogType.SUCCESS)
-                
             else:
                 self.energy_model.register_measurement(dato)
 
