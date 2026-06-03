@@ -110,10 +110,10 @@ class HistoricWindow(QDialog):
         self.btn_prev_metric.clicked.connect(self.previous_metric)
         self.btn_next_metric.clicked.connect(self.next_metric)
         
-        self.btn_search_epoch.clicked.connect(self.search_by_epoch_visual)
-        self.btn_search_time.clicked.connect(self.search_by_time_visual)
-        self.input_epoch.returnPressed.connect(self.search_by_epoch_visual)
-        self.input_time.returnPressed.connect(self.search_by_time_visual)
+        self.btn_search_epoch.clicked.connect(self.search_by_epoch)
+        self.btn_search_time.clicked.connect(self.search_by_time)
+        self.input_epoch.returnPressed.connect(self.search_by_epoch)
+        self.input_time.returnPressed.connect(self.search_by_time)
 
     def configure_dual_axis(self):
         self.metrics_view = pg.ViewBox()
@@ -314,8 +314,7 @@ class HistoricWindow(QDialog):
     # NÚCLEO DE LA LOGICA DE CORRELACIÓN VISUAL (INDEXACIÓN CRUZADA)
     # =====================================================================
 
-    def search_by_epoch_visual(self):
-        """Mapea una época introducida por teclado, mueve la línea roja y muestra métricas de train y val."""
+    def search_by_epoch(self):
         if not self.metrics_data or not self.metric_names:
             QMessageBox.warning(self, "Búsqueda", "Primero debe importar un archivo de métricas.")
             return
@@ -329,18 +328,16 @@ class HistoricWindow(QDialog):
         metric_name = self.metric_names[self.current_metric_index]
         phase_series = self.metrics_data.series[metric_name]
 
-        # 1. Extraer los valores de Train y Validation para esa época de forma segura
         val_train = "N/A"
         val_sub = "N/A"
         target_ts = None
 
-        # Buscamos en la fase 'train'
         if "train" in phase_series and target_epoch in phase_series["train"].steps:
             idx_t = phase_series["train"].steps.index(target_epoch)
             val_train = f"{phase_series['train'].values[idx_t]:.4f}"
-            target_ts = phase_series["train"].timestamps[idx_t] # Usamos este timestamp base
+            target_ts = phase_series["train"].timestamps[idx_t]
 
-        # Buscamos en la fase 'val'
+
         if "val" in phase_series and target_epoch in phase_series["val"].steps:
             idx_v = phase_series["val"].steps.index(target_epoch)
             val_sub = f"{phase_series['val'].values[idx_v]:.4f}"
@@ -351,14 +348,12 @@ class HistoricWindow(QDialog):
             QMessageBox.warning(self, "Búsqueda", f"La época {target_epoch} no existe en este registro.")
             return
 
-        # 2. Buscar el consumo de energía correspondiente en esa misma marca de tiempo
         watts_info = "N/A (Cargue CSV consumo)"
         if self.consumption_data:
             c_series = self.consumption_data.series[self.current_consumption_key]
             idx_c = min(range(len(c_series.timestamps)), key=lambda i: abs((c_series.timestamps[i] - target_ts).total_seconds()))
             watts_info = f"{c_series.values[idx_c]:.1f} W"
 
-        # 3. Renderizado Visual e Información Dual
         self.v_line.setValue(target_ts.timestamp())
         self.v_line.show()
         self.label_audit_info.setText(
@@ -368,8 +363,7 @@ class HistoricWindow(QDialog):
             f" <b>Consumo:</b> {watts_info}"
         )
 
-    def search_by_time_visual(self):
-        """Busca una hora del reloj, posiciona la línea y extrae la época y métricas de train y val más cercanas."""
+    def search_by_time(self):
         if not self.metrics_data or not self.metric_names:
             QMessageBox.warning(self, "Búsqueda", "Primero debe importar un archivo de métricas.")
             return
@@ -378,7 +372,7 @@ class HistoricWindow(QDialog):
         metric_name = self.metric_names[self.current_metric_index]
         phase_series = self.metrics_data.series[metric_name]
         
-        # Usamos cualquier fase disponible para extraer la fecha base del día
+
         any_phase = list(phase_series.keys())[0]
         fecha_base = phase_series[any_phase].timestamps[0].date()
 
@@ -387,8 +381,7 @@ class HistoricWindow(QDialog):
         except ValueError:
             QMessageBox.warning(self, "Búsqueda", "Formato de hora incorrecto. Use HH:MM:SS (ej. 17:59:30).")
             return
-
-        # 1. Encontrar el índice de tiempo más cercano usando una fase de referencia (ej. 'train' o la primera que haya)
+        
         ref_phase = "train" if "train" in phase_series else any_phase
         series_ref = phase_series[ref_phase]
         
@@ -396,7 +389,6 @@ class HistoricWindow(QDialog):
         nearest_epoch = series_ref.steps[idx_ref]
         ts_real_registro = series_ref.timestamps[idx_ref]
 
-        # 2. Extraer los valores correspondientes a esa época para ambas curvas
         val_train = f"{series_ref.values[idx_ref]:.4f}" if ref_phase == "train" else "N/A"
         val_sub = "N/A"
 
@@ -408,7 +400,6 @@ class HistoricWindow(QDialog):
             idx_t = phase_series["train"].steps.index(nearest_epoch)
             val_train = f"{phase_series['train'].values[idx_t]:.4f}"
 
-        # 3. Encontrar el consumo eléctrico más cercano a esa misma hora
         watts_info = "N/A"
         if self.consumption_data:
             c_series = self.consumption_data.series[self.current_consumption_key]
