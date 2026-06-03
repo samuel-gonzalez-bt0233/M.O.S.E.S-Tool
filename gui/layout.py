@@ -18,7 +18,7 @@ class AppLayout(QMainWindow):
         self.header = QWidget(objectName="Header")
         header_layout = QGridLayout(self.header)
 
-        self.title_label = QLabel("GAIA Monitor", objectName="Titulo")
+        self.title_label = QLabel("M.O.S.E.S", objectName="Titulo")
         self.title_label.setStyleSheet("font-size: 56px; font-weight: bold; color: #2ECC71;")
         header_layout.addWidget(self.title_label, 0,0)
 

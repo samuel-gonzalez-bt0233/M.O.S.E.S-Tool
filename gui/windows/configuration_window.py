@@ -12,7 +12,7 @@ from styles.hint import Hint
 class ConfigWindow(QDialog):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Configuración de GAIA Monitor")
+        self.setWindowTitle("Configuración de M.O.S.E.S")
         self.setFixedSize(300, 350)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 

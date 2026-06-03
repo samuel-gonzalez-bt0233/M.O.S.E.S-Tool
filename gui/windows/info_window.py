@@ -4,7 +4,7 @@ from styles.info import INFO_CONTENTS
 class HelpWindow(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Guía de Uso - G.A.I.A Monitor")
+        self.setWindowTitle("Guía de Uso - M.O.S.E.S")
         self.resize(500, 400)
         
         layout = QVBoxLayout(self)
