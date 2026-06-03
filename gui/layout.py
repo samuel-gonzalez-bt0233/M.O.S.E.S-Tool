@@ -2,7 +2,8 @@ from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QGridLayout,
                              QHBoxLayout, QLabel, QLineEdit, QPushButton,
                              QStackedWidget, QGroupBox)
 from PyQt6.QtCore import Qt
-from gui.gui_components import EcoGraph, EcoTerminal
+from gui.components.graph import Graph
+from gui.components.terminal import Terminal
 import pyqtgraph as pg
 
 
@@ -78,8 +79,8 @@ class AppLayout(QMainWindow):
 
         # GRÁFICAS
         self.stack = QStackedWidget()
-        self.graph_inst = EcoGraph('#2ECC71', (46, 204, 113, 40))
-        self.graph_accum = EcoGraph('#8E44AD', (142, 68, 173, 40))
+        self.graph_inst = Graph('#2ECC71', (46, 204, 113, 40))
+        self.graph_accum = Graph('#8E44AD', (142, 68, 173, 40))
 
         # CONTENEDOR DE ENTRENAMIENTO
         self.training_container = QWidget()
@@ -105,6 +106,6 @@ class AppLayout(QMainWindow):
         self.stack.addWidget(self.training_container)
 
         # --- TERMINAL ---
-        self.terminal = EcoTerminal()
+        self.terminal = Terminal()
         main_layout.addWidget(self.stack, stretch=4)
         main_layout.addWidget(self.terminal, stretch=1)

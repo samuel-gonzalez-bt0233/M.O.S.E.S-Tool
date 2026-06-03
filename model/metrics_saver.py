@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal
 
-from core.metrics_dto import MetricsDto
+from model.metrics_dto import MetricsDto
 
 
 @dataclass
@@ -17,7 +17,7 @@ class DataPoint:
 BASE_DIR = "Training Metrics"
 
 
-class MetricsModel:
+class MetricsSaver:
     def __init__(self):
         self.metrics = {}
         self.metric_order = []

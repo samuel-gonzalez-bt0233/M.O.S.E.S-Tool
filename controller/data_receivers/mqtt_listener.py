@@ -2,8 +2,8 @@ import json
 
 import paho.mqtt.client as mqtt
 from styles.config_logs import LogType
-from core.metrics_dto import MetricsDto
-from gui.gui_components import EcoTerminal
+from model.metrics_dto import MetricsDto
+
 
 
 def on_connect(client, window, flags, rc):
@@ -33,7 +33,7 @@ def init_mqtt_listener(window):
     client.on_message = on_message
 
     try:
-        window.terminal.log(f"RECEPTOR: Conectando al broker local.", LogType.DEBUG)
+        window.terminal.log(f"RECEPTOR: Conectando al broker local.", LogType.INFO)
         client.connect("localhost", 1883, 60)
 
         client.loop_forever()

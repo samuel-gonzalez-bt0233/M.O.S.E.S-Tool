@@ -1,7 +1,6 @@
 import asyncio
 from tapo import ApiClient 
 from styles.config_logs import LogType
-from gui.gui_components import EcoTerminal
 
 async def measure_consumption(data_queue, credentials, stop_event):
 

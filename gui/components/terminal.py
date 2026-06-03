@@ -4,15 +4,8 @@ from PyQt6.QtCore import Qt
 import time
 from styles.config_logs import LogType
 
-class EcoGraph(pg.PlotWidget):
-    def __init__(self, line_color, color_fill):
-        super().__init__()
-        self.setBackground('#FFFFFF')
-        self.showGrid(x=True, y=True, alpha=0.1)
-        self.curve = self.plot(pen=pg.mkPen(color=line_color, width=3),
-                               fillLevel=0, brush=color_fill)
 
-class EcoTerminal(QTextEdit):
+class Terminal(QTextEdit):
     def __init__(self, parent=None):
         
         super().__init__(parent)

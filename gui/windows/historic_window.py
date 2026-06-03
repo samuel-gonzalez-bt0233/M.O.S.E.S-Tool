@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
     QPushButton, QVBoxLayout, QLineEdit
 )
 
-from core.historic_data_loader import (
+from model.historic_data_loader import (
     ConsumptionData,
     TrainingMetricsData,
     load_consumption_csv,

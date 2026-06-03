@@ -1,15 +1,15 @@
 from PyQt6.QtWidgets import QFileDialog, QDialog
 from PyQt6.QtCore import QTimer, pyqtSignal
 
-from core.metrics_saver import MetricsModel
-from gui.gui_layout import AppLayout
-from core.energy_saver import EnergyModel
-from gui.windows.gui_historic_window import HistoricWindow
-from gui.windows.gui_info_window import HelpWindow
-from handler.gui_handlers.gui_energy_handler import EnergyHandler
-from handler.gui_handlers.gui_metrics_handler import MetricsHandler
+from model.metrics_saver import MetricsSaver
+from gui.layout import AppLayout
+from model.energy_saver import EnergySaver
+from gui.windows.historic_window import HistoricWindow
+from gui.windows.info_window import HelpWindow
+from controller.gui_handlers.energy_gui_handler import EnergyHandler
+from controller.gui_handlers.metrics_gui_handler import MetricsHandler
 from styles.styles import STYLE_SHEET
-from core.metrics_dto import MetricsDto
+from model.metrics_dto import MetricsDto
 from styles.config_logs import LogType
 
 class AppEco(AppLayout):
@@ -18,8 +18,8 @@ class AppEco(AppLayout):
 
     def __init__(self, data_queue):
         super().__init__()
-        self.energy_model = EnergyModel()
-        self.results_model = MetricsModel()
+        self.energy_model = EnergySaver()
+        self.results_model = MetricsSaver()
         self.data_queue = data_queue
         self.setup_ui(self.energy_model)
         self.resize(1200, 800)
@@ -37,7 +37,7 @@ class AppEco(AppLayout):
             self.btn_training_metrics, self.btn_next_metric, self.btn_prev_metric,
         )
         self._connect_events()
-        self.terminal.log(f"SESIÓN INICIADA: {self.energy_model.csv_file}", LogType.DEBUG)
+        self.terminal.log(f"SESIÓN INICIADA: {self.energy_model.csv_file}", LogType.INFO)
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_all)
@@ -81,10 +81,10 @@ class AppEco(AppLayout):
         modal.show()
 
     def emit_config(self):
-        from gui.windows.gui_configuration_window import ConfigWindow
+        from gui.windows.configuration_window import ConfigWindow
         window = ConfigWindow()
         if window.exec() == QDialog.DialogCode.Accepted:
             self.terminal.log("SISTEMA: Reiniciando config", LogType.WARNING)
-            self.terminal.log(f"TAPO: Intentando conectar a {window.config_data['ip']}", LogType.DEBUG)
+            self.terminal.log(f"TAPO: Intentando conectar a {window.config_data['ip']}", LogType.INFO)
             self.reconnection_request.emit(window.config_data)
 

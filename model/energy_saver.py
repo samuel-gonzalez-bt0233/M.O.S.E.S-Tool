@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 
-class EnergyModel:
+class EnergySaver:
     def __init__(self):
         self.last_measurement = 0.0
         self.total_consumption = 0.0

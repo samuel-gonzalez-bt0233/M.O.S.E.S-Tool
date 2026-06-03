@@ -8,7 +8,6 @@ class SeriesData:
     label: str
     timestamps: list[datetime]
     values: list[float]
-    # Añadimos 'steps' como opcional para no romper el CSV de consumo
     steps: list[int] = field(default_factory=list)
 
 
@@ -95,7 +94,7 @@ def load_training_metrics_csv(file_path: str) -> TrainingMetricsData:
             phase = row[phase_col]
             value_name = row[value_name_col]
             value = float(row[value_col])
-            step = int(row[step_col]) # <--- CAPTURAMOS EL STEP (ÉPOCA)
+            step = int(row[step_col]) 
             timestamp = datetime.fromisoformat(row[timestamp_col])
 
             if value_name not in series:
@@ -106,12 +105,12 @@ def load_training_metrics_csv(file_path: str) -> TrainingMetricsData:
                     label=f"{value_name}",
                     timestamps=[],
                     values=[],
-                    steps=[] # <--- INICIALIZAMOS LA LISTA DE ÉPOCAS
+                    steps=[] 
                 )
 
             series[value_name][phase].timestamps.append(timestamp)
             series[value_name][phase].values.append(value)
-            series[value_name][phase].steps.append(step) # <--- GUARDAMOS LA ÉPOCA
+            series[value_name][phase].steps.append(step) 
 
     return TrainingMetricsData(file_path=file_path, series=series)
 

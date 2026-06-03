@@ -1,14 +1,14 @@
 import pyqtgraph as pg
 from PyQt6.QtWidgets import QStackedWidget
 
-from core.metrics_saver import MetricsModel
-from core.metrics_dto import MetricsDto
+from model.metrics_saver import MetricsSaver
+from model.metrics_dto import MetricsDto
 
 
 class MetricsHandler:
     def __init__(
         self,
-        model: MetricsModel,
+        model: MetricsSaver,
         stack: QStackedWidget,
         training_container,
         graph_training_metrics,
