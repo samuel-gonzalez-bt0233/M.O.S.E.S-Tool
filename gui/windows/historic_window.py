@@ -18,7 +18,6 @@ from model.historic_data_loader import (
 
 class TimeAxisItem(pg.AxisItem):
     def tickStrings(self, values, scale, spacing):
-        # Manejo de excepciones por si el zoom genera valores de timestamp corruptos
         strings = []
         for value in values:
             try:
@@ -43,8 +42,7 @@ class HistoricWindow(QDialog):
         self.metric_names: list[str] = []
         self.current_metric_index = 0
 
-        # --- COMPONENTE VISUAL DE Búsqueda ---
-        self.v_line = None # Línea vertical infinita para marcar el hito analizado
+        self.v_line = None 
 
         self.build_ui()
         self.configure_dual_axis()
@@ -52,17 +50,14 @@ class HistoricWindow(QDialog):
     def build_ui(self):
         layout = QVBoxLayout(self)
 
-        # 1. Cabecera informativa (ESTO DEBE IR ARRIBA DEL TODO)
         self.label_files = QLabel("Consumo: -- | Métricas: --")
         self.label_files.setStyleSheet("font-weight: bold; color: #27AE60;")
         layout.addWidget(self.label_files)
         
-        # DEFINICIÓN DEL BANNER: Asegúrate de que esta línea esté aquí
         self.label_audit_info = QLabel("Use el panel inferior para buscar hitos por Época o por Hora.")
         self.label_audit_info.setStyleSheet("font-weight: 500; color: #2C3E50; background-color: #ECF0F1; padding: 5px; border-radius: 4px;")
         layout.addWidget(self.label_audit_info)
 
-        # 2. El Gráfico Principal (Se crea DESPUÉS del banner)
         self.plot_item = pg.PlotItem(axisItems={"bottom": TimeAxisItem(orientation="bottom")})
         self.graph = pg.PlotWidget(plotItem=self.plot_item)
         self.graph.setBackground("#FFFFFF")
@@ -70,15 +65,14 @@ class HistoricWindow(QDialog):
         self.plot_item.hideButtons()
         layout.addWidget(self.graph)
 
-        # 3. Panel de búsqueda cruzada
         layout_search = QHBoxLayout()
         self.input_epoch = QLineEdit()
         self.input_epoch.setPlaceholderText("Buscar por Época (ej. 20)")
-        self.btn_search_epoch = QPushButton("🔍 Ir a Época")
+        self.btn_search_epoch = QPushButton("Ir a Época")
         
         self.input_time = QLineEdit()
         self.input_time.setPlaceholderText("Buscar por Hora (ej. 17:59:30)")
-        self.btn_search_time = QPushButton("🔍 Ir a Hora")
+        self.btn_search_time = QPushButton("Ir a Hora")
 
         layout_search.addWidget(QLabel("<b>Buscar Época:</b>"))
         layout_search.addWidget(self.input_epoch)
@@ -88,11 +82,10 @@ class HistoricWindow(QDialog):
         layout_search.addWidget(self.btn_search_time)
         layout.addLayout(layout_search)
 
-        # 4. Botonera inferior de carga
         layout_btns = QHBoxLayout()
         self.btn_load_consumption = QPushButton("Importar Consumo")
         self.btn_load_metrics = QPushButton("Importar Métricas")
-        self.btn_toggle_consumption = QPushButton("Ver Acumulado")
+        self.btn_toggle_consumption = QPushButton("Ver Consumo")
         self.btn_prev_metric = QPushButton("Métrica Anterior")
         self.btn_next_metric = QPushButton("Métrica Siguiente")
 
@@ -103,7 +96,6 @@ class HistoricWindow(QDialog):
         layout_btns.addWidget(self.btn_next_metric)
         layout.addLayout(layout_btns)
 
-        # 5. Conexiones de eventos (Signals)
         self.btn_load_consumption.clicked.connect(self.select_consumption_csv)
         self.btn_load_metrics.clicked.connect(self.select_metrics_csv)
         self.btn_toggle_consumption.clicked.connect(self.toggle_consumption_mode)
@@ -118,14 +110,14 @@ class HistoricWindow(QDialog):
     def configure_dual_axis(self):
         self.metrics_view = pg.ViewBox()
         self.metrics_view.setZValue(100)
-        self.plot_item.showAxis("right")
         self.plot_item.scene().addItem(self.metrics_view)
-        self.plot_item.getAxis("right").linkToView(self.metrics_view)
+        
         consumption_view = self.plot_item.getViewBox()
         self.metrics_view.setXLink(consumption_view)
         self.metrics_legend = pg.LegendItem(offset=(-10, 10))
         self.metrics_legend.setParentItem(consumption_view)
         self.metrics_legend.anchor(itemPos=(1, 1), parentPos=(1, 1))
+        
         consumption_view.setMouseEnabled(x=False, y=False)
         self.metrics_view.setMouseEnabled(x=False, y=False)
         consumption_view.sigResized.connect(self.sync_views)
@@ -162,6 +154,7 @@ class HistoricWindow(QDialog):
     def unload_metrics(self):
         self.metrics_csv_path = None
         self.metrics_data = None
+        self.metric_names = []
         self.btn_load_metrics.setText("Importar Métricas")
         self.btn_load_metrics.clicked.disconnect(self.unload_metrics)
         self.btn_load_metrics.clicked.connect(self.select_metrics_csv)
@@ -200,7 +193,7 @@ class HistoricWindow(QDialog):
 
     def toggle_consumption_mode(self):
         self.current_consumption_key = "accum" if self.current_consumption_key == "inst" else "inst"
-        self.btn_toggle_consumption.setText("Ver Instantáneo" if self.current_consumption_key == "accum" else "Ver Acumulado")
+        self.btn_toggle_consumption.setText("Ver Potencia Activa" if self.current_consumption_key == "accum" else "Ver Consumo Total")
         self.refresh()
 
     def next_metric(self):
@@ -222,11 +215,11 @@ class HistoricWindow(QDialog):
         self.metrics_view.clear()
         self.metrics_legend.clear()
         
-        # Re-inicializamos la línea infinita para que no desaparezca al limpiar la pantalla
         self.v_line = pg.InfiniteLine(angle=90, movable=False, pen=pg.mkPen(color="#E74C3C", width=2, style=Qt.PenStyle.DashLine))
         self.plot_item.addItem(self.v_line)
-        self.v_line.hide() # Oculta por defecto hasta que se haga una consulta
+        self.v_line.hide() 
 
+        # Control explícito de la visibilidad y enlace del eje Y secundario
         use_dual_axis = self.consumption_data is not None and self.metrics_data is not None
         if use_dual_axis:
             self.plot_item.showAxis("right")
@@ -272,12 +265,14 @@ class HistoricWindow(QDialog):
             )
             consumption_curve.setZValue(-10)
         else:
-            self.plot_item.setLabel("left", "Consumo (W)")
+            self.plot_item.setLabel("left", "Potencia (W)")
 
     def refresh_metrics(self, all_x: list, metrics_x: list, use_dual_axis: bool):
+        # Solo procesamos y mostramos etiquetas del eje derecho si ambos archivos están cargados
         if self.metrics_data and self.metric_names:
             metric_name = self.metric_names[self.current_metric_index]
             phase_series = self.metrics_data.series[metric_name]
+            
             if use_dual_axis:
                 self.plot_item.setLabel("right", metric_name)
             else:
@@ -301,18 +296,15 @@ class HistoricWindow(QDialog):
                     symbolPen=pg.mkPen(color=colors.get(phase, "#34495E"), width=1),
                 )
                 curve.setZValue(10)
+                
                 if use_dual_axis:
                     self.metrics_view.addItem(curve)
                 else:
                     self.plot_item.addItem(curve)
                 self.metrics_legend.addItem(curve, phase)
         else:
-            self.plot_item.setLabel("right", "Métrica")
-
-
-    # =====================================================================
-    # NÚCLEO DE LA LOGICA DE CORRELACIÓN VISUAL (INDEXACIÓN CRUZADA)
-    # =====================================================================
+            # Si no hay métricas o no se cumple el dual axis, nos aseguramos de limpiar cualquier etiqueta residual de la derecha
+            self.plot_item.getAxis("right").setLabel("")
 
     def search_by_epoch(self):
         if not self.metrics_data or not self.metric_names:
@@ -337,7 +329,6 @@ class HistoricWindow(QDialog):
             val_train = f"{phase_series['train'].values[idx_t]:.4f}"
             target_ts = phase_series["train"].timestamps[idx_t]
 
-
         if "val" in phase_series and target_epoch in phase_series["val"].steps:
             idx_v = phase_series["val"].steps.index(target_epoch)
             val_sub = f"{phase_series['val'].values[idx_v]:.4f}"
@@ -360,7 +351,7 @@ class HistoricWindow(QDialog):
             f" <b>Resultado Época {target_epoch}:</b> Hora: {target_ts.strftime('%H:%M:%S')} | "
             f" <b>Train {metric_name}:</b> {val_train} | "
             f" <b>Val {metric_name}:</b> {val_sub} | "
-            f" <b>Consumo:</b> {watts_info}"
+            f" <b>Potencia:</b> {watts_info}"
         )
 
     def search_by_time(self):
@@ -372,7 +363,6 @@ class HistoricWindow(QDialog):
         metric_name = self.metric_names[self.current_metric_index]
         phase_series = self.metrics_data.series[metric_name]
         
-
         any_phase = list(phase_series.keys())[0]
         fecha_base = phase_series[any_phase].timestamps[0].date()
 
@@ -406,12 +396,11 @@ class HistoricWindow(QDialog):
             idx_c = min(range(len(c_series.timestamps)), key=lambda i: abs((c_series.timestamps[i] - target_ts).total_seconds()))
             watts_info = f"{c_series.values[idx_c]:.1f} W"
 
-        # 4. Renderizado Visual
         self.v_line.setValue(ts_real_registro.timestamp())
         self.v_line.show()
         self.label_audit_info.setText(
             f" <b>Resultado Hora {time_str}:</b> Registro más cercano: {ts_real_registro.strftime('%H:%M:%S')} | "
             f" <b>Época:</b> {nearest_epoch} | "
             f" <b>Train:</b> {val_train} |  <b>Val:</b> {val_sub} | "
-            f" <b>Consumo:</b> {watts_info}"
+            f" <b>Potencia:</b> {watts_info}"
         )

@@ -18,7 +18,7 @@ class AppLayout(QMainWindow):
         self.header = QWidget(objectName="Header")
         header_layout = QGridLayout(self.header)
 
-        self.title_label = QLabel("M.O.S.E.S", objectName="Titulo")
+        self.title_label = QLabel("Visual MOSES", objectName="Titulo")
         self.title_label.setStyleSheet("font-size: 56px; font-weight: bold; color: #2ECC71;")
         header_layout.addWidget(self.title_label, 0,0)
 
@@ -43,7 +43,7 @@ class AppLayout(QMainWindow):
         layout_monit.addWidget(self.btn_reset, 1, 0, 1, 2)
 
         # 2. Grupo Registers
-        self.group_registers = QGroupBox("Registers")
+        self.group_registers = QGroupBox("Métricas")
         layout_registers = QVBoxLayout(self.group_registers)
         self.btn_history = QPushButton("Visualizar Históricos", objectName="BtnHistory")
         self.btn_export = QPushButton("Exportar Logs", objectName="BtnExport")
@@ -81,8 +81,9 @@ class AppLayout(QMainWindow):
         self.stack = QStackedWidget()
         self.graph_inst = Graph('#2ECC71', (46, 204, 113, 40))
         self.graph_accum = Graph('#8E44AD', (142, 68, 173, 40))
-
-        # CONTENEDOR DE ENTRENAMIENTO
+        self.graph_inst.setLabel('left', 'Potencia', units='W')
+        
+        self.graph_accum.setLabel('left', 'Consumo Total', units='W s')
         self.training_container = QWidget()
         training_layout = QVBoxLayout(self.training_container)
 

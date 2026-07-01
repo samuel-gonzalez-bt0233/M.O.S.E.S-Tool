@@ -48,12 +48,12 @@ def load_consumption_csv(file_path: str) -> ConsumptionData:
 
     series = {
         "inst": SeriesData(
-            label="Consumo Instantáneo (W)",
+            label="Potencia Activa (W)",
             timestamps=timestamps,
             values=watts,
         ),
         "accum": SeriesData(
-            label="Consumo Acumulado (W)",
+            label="Consumo Total (W s)",
             timestamps=timestamps,
             values=accum,
         )
