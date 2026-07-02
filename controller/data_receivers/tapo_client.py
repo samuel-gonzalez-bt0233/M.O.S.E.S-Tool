@@ -27,3 +27,24 @@ async def measure_consumption(data_queue, credentials, stop_event):
 
     except Exception as e:
         data_queue.put(f"[ENGINE] Error crítico de conexión: {e}")
+
+import asyncio
+import random
+import time
+
+async def produce_mock_voltage(queue: asyncio.Queue):
+    """
+    Corutina asíncrona que simula el flujo continuo del enchufe Tapo.
+    Genera lecturas de voltaje y las inyecta en una cola asíncrona cada segundo.
+    """
+    
+    while True:
+        # 1. Generamos el voltaje con fluctuación real en torno a 230V
+        voltage = round(random.uniform(30.0, 32.0), 1)
+        
+        
+        # 3. Metemos el objeto en la cola de forma asíncrona (no bloqueante)
+        queue.put(voltage)
+        
+        # 4. Nos dormimos exactamente 1 segundo antes de la próxima lectura
+        await asyncio.sleep(1)

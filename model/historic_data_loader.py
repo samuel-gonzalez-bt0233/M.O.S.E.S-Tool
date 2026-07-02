@@ -48,7 +48,7 @@ def load_consumption_csv(file_path: str) -> ConsumptionData:
 
     series = {
         "inst": SeriesData(
-            label="Potencia Activa (W)",
+            label="Potencia (W)",
             timestamps=timestamps,
             values=watts,
         ),

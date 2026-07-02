@@ -43,7 +43,7 @@ class AppLayout(QMainWindow):
         layout_monit.addWidget(self.btn_reset, 1, 0, 1, 2)
 
         # 2. Grupo Registers
-        self.group_registers = QGroupBox("Métricas")
+        self.group_registers = QGroupBox("Registros")
         layout_registers = QVBoxLayout(self.group_registers)
         self.btn_history = QPushButton("Visualizar Históricos", objectName="BtnHistory")
         self.btn_export = QPushButton("Exportar Logs", objectName="BtnExport")
@@ -82,14 +82,17 @@ class AppLayout(QMainWindow):
         self.graph_inst = Graph('#2ECC71', (46, 204, 113, 40))
         self.graph_accum = Graph('#8E44AD', (142, 68, 173, 40))
         self.graph_inst.setLabel('left', 'Potencia', units='W')
+        self.graph_inst.setLabel('bottom', 'Tiempo', units='s')
         
         self.graph_accum.setLabel('left', 'Consumo Total', units='W s')
+        self.graph_accum.setLabel('bottom', 'Tiempo', units='s')
         self.training_container = QWidget()
         training_layout = QVBoxLayout(self.training_container)
 
         self.graph_training_metrics = pg.PlotWidget()
         self.graph_training_metrics.setBackground('#FFFFFF')
         self.graph_training_metrics.showGrid(x=True, y=True, alpha=0.1)
+        self.graph_training_metrics.setLabel('bottom', 'Tiempo', units='s')
 
         self.training_controls = QWidget()
         self.btn_prev_metric = QPushButton("<<<")

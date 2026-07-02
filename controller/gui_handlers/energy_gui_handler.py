@@ -39,10 +39,22 @@ class EnergyHandler:
         self._terminal.log("SISTEMA: Datos reseteados.", LogType.INFO)
 
     def toggle_graph(self):
-        if self._stack.currentWidget() is self._graph_inst:
-            self._stack.setCurrentWidget(self._graph_accum)
-            self._btn_toggle.setText("Vista: Acumulado")
+        current_index = self._stack.currentIndex()
+        if current_index == 0:
+    
+            self._stack.setCurrentIndex(1)
+            self._btn_toggle.setText("Vista: Instantáneo")
+        elif current_index == 1:
+
+            if hasattr(self, 'training_container'):
+                self._stack.setCurrentIndex(2)
+                self._btn_toggle.setText("Vista: Entrenamiento")
+            else:
+
+                self._stack.setCurrentIndex(0)
+                self._btn_toggle.setText("Vista: Acumulado")
         else:
-            self._stack.setCurrentWidget(self._graph_inst)
+
+            self._stack.setCurrentIndex(0)
             self._btn_toggle.setText("Vista: Instantáneo")
 

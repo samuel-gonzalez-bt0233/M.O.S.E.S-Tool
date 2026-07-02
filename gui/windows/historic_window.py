@@ -193,7 +193,7 @@ class HistoricWindow(QDialog):
 
     def toggle_consumption_mode(self):
         self.current_consumption_key = "accum" if self.current_consumption_key == "inst" else "inst"
-        self.btn_toggle_consumption.setText("Ver Potencia Activa" if self.current_consumption_key == "accum" else "Ver Consumo Total")
+        self.btn_toggle_consumption.setText("Ver Potencia" if self.current_consumption_key == "accum" else "Ver Consumo Total")
         self.refresh()
 
     def next_metric(self):
@@ -402,5 +402,5 @@ class HistoricWindow(QDialog):
             f" <b>Resultado Hora {time_str}:</b> Registro más cercano: {ts_real_registro.strftime('%H:%M:%S')} | "
             f" <b>Época:</b> {nearest_epoch} | "
             f" <b>Train:</b> {val_train} |  <b>Val:</b> {val_sub} | "
-            f" <b>Potencia:</b> {watts_info}"
+            f" <b>Consumo:</b> {watts_info}"
         )

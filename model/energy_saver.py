@@ -26,11 +26,11 @@ class EnergySaver:
     def register_measurement(self, value):
         self.last_measurement = value
         self.data_y.append(value)
-        if len(self.data_y) > 100: self.data_y.pop(0)
+        if len(self.data_y) > 1000: self.data_y.pop(0)
         
         self.total_consumption += value
         self.data_accum.append(self.total_consumption)
-        if len(self.data_accum) > 100: self.data_accum.pop(0)
+        if len(self.data_accum) > 1000: self.data_accum.pop(0)
         
         # Guardado automático persistente
         with open(self.csv_file, 'a', newline='') as f:

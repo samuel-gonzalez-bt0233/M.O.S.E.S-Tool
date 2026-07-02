@@ -10,7 +10,7 @@ from styles.config_logs import LogType
 # Imports de tu proyecto
 from gui.main_window import AppEco
 from gui.windows.configuration_window import ConfigWindow
-from controller.data_receivers.tapo_client import measure_consumption
+from controller.data_receivers.tapo_client import measure_consumption, produce_mock_voltage
 from controller.data_receivers.mqtt_listener import init_mqtt_listener
 
 # --- GLOBAL PARA CONTROL DE HILOS ---
